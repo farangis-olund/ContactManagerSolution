@@ -1,6 +1,6 @@
 ﻿namespace AddressBookLibrary.Enums;
 
-public enum ServiceStatus
+public enum RepositoryStatus
 {
     Failed = 0,
     Suceeded = 1,

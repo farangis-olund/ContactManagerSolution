@@ -2,9 +2,9 @@
 
 namespace AddressBookLibrary.Interfaces
 {
-    public interface IServiceResult
+    public interface IRepositoryResult
     {
         object Result { get; set; }
-        ServiceStatus Status { get; set; }
+        RepositoryStatus Status { get; set; }
     }
 }

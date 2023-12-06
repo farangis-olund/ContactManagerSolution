@@ -3,8 +3,8 @@ using AddressBookLibrary.Interfaces;
 
 namespace AddressBookLibrary.Models.Responses;
 
-public class ServiceResult : IServiceResult
+public class RepositoryResult : IRepositoryResult
 {
-    public ServiceStatus Status { get; set; }
+    public RepositoryStatus Status { get; set; }
     public object Result { get; set; } = null!;
 }
