@@ -7,6 +7,6 @@ public interface IContactRepository
     IRepositoryResult GetContact(string email);
     IRepositoryResult GetAllContactsToList();
     IRepositoryResult GetAllContacts();
-    IRepositoryResult DeleteContact(IContact contact);
+    IRepositoryResult DeleteContact(string email);
     IRepositoryResult UpdateContact(IContact contact);
 }

@@ -65,32 +65,55 @@ public class ContactRepository : IContactRepository
 
     }
 
-    public IRepositoryResult DeleteContact(IContact contact)
+    public IRepositoryResult DeleteContact(string email)
     {
         try
         {
-           
+            var contact = _contacts.FirstOrDefault(x => x.Email == email);
+            if (contact != null)
+            {
+                _contacts.Remove(contact);
+                // Save the updated contacts list to a JSON file
+                _fileService.WriteToJsonFile(_contacts, filePath);
+
+                result.Status = Enums.RepositoryStatus.Suceeded;
+                result.Result = _contacts; 
+            }
+            else
+            {
+                result.Status = Enums.RepositoryStatus.NotFound;
+            }
 
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex);
+            result.Status = Enums.RepositoryStatus.Failed;
         }
-        return null!;
+        return result;
     }
 
     public IRepositoryResult GetContact(string email)
     {
         try
         {
-
+            var contact = _contacts.FirstOrDefault(x => x.Email == email);
+            if (contact != null)
+            {
+                result.Status = Enums.RepositoryStatus.Suceeded;
+                result.Result = contact;
+            }
+            else
+            {
+                result.Status = Enums.RepositoryStatus.NotFound;
+            }
 
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex);
         }
-        return null!;
+        return result;
     }
 
     public IRepositoryResult GetAllContactsToList()
