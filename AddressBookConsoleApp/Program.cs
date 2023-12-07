@@ -6,9 +6,8 @@ using AddressBookLibrary.Repositories;
 using AddressBookLibrary.Models;
 using AddressBookLibrary.Services;
 using AddressBookLibrary.Models.Responses;
-using System.Collections.Generic;
 
-var contactsList = new List<IContact>();
+
 
 var builder = Host.CreateDefaultBuilder().ConfigureServices((services) =>
 {
@@ -17,8 +16,11 @@ var builder = Host.CreateDefaultBuilder().ConfigureServices((services) =>
     services.AddSingleton<IContactService, ContactService>();
     services.AddSingleton<IRepositoryResult, RepositoryResult>();
     services.AddSingleton<FileService>();
-    services.AddScoped<IContact, Contact>();
+    services.AddSingleton<IContact, Contact>();
+    var contactsList = new List<IContact>();
     services.AddSingleton<List<IContact>>(contactsList);
+
+
 
     services.AddSingleton<IContactRepository>(provider =>
     {

@@ -26,6 +26,7 @@ public class MenuService : IMenuService
     public void ShowMenu()
     {
         _contactRepository.GetAllContactsToList();
+
         while (true)
         {
             DisplayMainMenu();
@@ -103,7 +104,7 @@ public class MenuService : IMenuService
         Console.WriteLine();
         
         var result = _contactRepository.AddContact(_contact);
-
+        
         switch (result.Status)
         {
             case RepositoryStatus.Suceeded:
@@ -157,7 +158,7 @@ public class MenuService : IMenuService
         Console.Write("Enter an Email: ");
         var option = Console.ReadLine() ?? "";
         var result = _contactRepository.DeleteContact(option);
-
+        
         switch (result.Status)
         {
             case RepositoryStatus.Suceeded:
@@ -183,15 +184,15 @@ public class MenuService : IMenuService
         var result = _contactRepository.GetAllContacts();
         if (result.Status == RepositoryStatus.Suceeded)
         {
-            if (result.Result is List<IContact> contactList)
+            if (result.Result is List<IContact> contact)
             {
-                if (!contactList.Any())
+                if (!contact.Any())
                 {
                     Console.WriteLine($"There is no any contact in the list.");
                 }
                 else
                 {
-                    foreach (var item in contactList)
+                    foreach (var item in contact)
                     {
                         Console.WriteLine($"FirstName: {item.FirstName} LastName: {item.LastName} Email: {item.Email}");
                         Console.WriteLine();
