@@ -1,8 +1,6 @@
 ﻿
 using AddressBookLibrary.Interfaces;
 using AddressBookLibrary.Models;
-using AddressBookLibrary.Repositories;
-using AddressBookLibrary.Services;
 
 namespace AddressBookConsoleApp.Services;
 
@@ -13,22 +11,23 @@ public interface IMenuService
 
 public class MenuService : IMenuService
 {
-    IContact _contact;
+    IContact _contact= new Contact();
+
     private IContactRepository _contactRepository;
 
-    public MenuService(IContactRepository contactRepository, IContact contact)
+    public MenuService(IContactRepository contactRepository)
     {
         _contactRepository = contactRepository;
-        _contact = contact;
+        
     }
 
     public void ShowMenu()
     {
-       
+        _contactRepository.GetAllContactsToList();
         while (true)
         {
             DisplayMainMenu();
-           
+
             var option = Console.ReadLine();
 
             switch (option)
@@ -42,6 +41,9 @@ public class MenuService : IMenuService
                 case "3":
                     break;
                 case "4":
+                    break;
+                case "5":
+                    ShowAllContacts();
                     break;
                 case "0":
                     ExitApp();
@@ -79,7 +81,7 @@ public class MenuService : IMenuService
     private void AddContact()
     {
         DisplayMenuTitle($"Add New Contact");
-
+        
         Console.Write("Enter First Name: ");
         _contact.FirstName = Console.ReadLine() ?? "";
         Console.WriteLine();
@@ -105,11 +107,11 @@ public class MenuService : IMenuService
         switch (result.Status)
         {
             case AddressBookLibrary.Enums.RepositoryStatus.Suceeded:
-                Console.WriteLine("A book was added successfully!");
+                Console.WriteLine("A Contact was added successfully!");
                 break;
 
             case AddressBookLibrary.Enums.RepositoryStatus.AlreadyExists:
-                Console.WriteLine("A book aready exist!");
+                Console.WriteLine("A Contact aready exist!");
                 break;
 
             case AddressBookLibrary.Enums.RepositoryStatus.Failed:
@@ -118,6 +120,41 @@ public class MenuService : IMenuService
         }
 
         DisplayPressAnyKey();
+    }
+
+    private void ShowAllContacts()
+    {
+        DisplayMenuTitle("Show All Contacts");
+
+        var result = _contactRepository.GetAllContacts();
+        if (result.Status == AddressBookLibrary.Enums.RepositoryStatus.Suceeded)
+        {
+            if (result.Result is List<IContact> contactList)
+            {
+                if (!contactList.Any())
+                {
+                    Console.WriteLine($"There are no contacts exist.");
+                }
+                else
+                {
+                    foreach (var item in contactList)
+                    {
+                        DisplayContactDetails(item);
+                        Console.WriteLine();
+                    }
+                }
+            }
+        }
+        DisplayPressAnyKey();
+    }
+
+    private void DisplayContactDetails(IContact contact)
+    {
+        Console.WriteLine($"FirstName: {contact.FirstName}");
+        Console.WriteLine($"LastName: {contact.LastName}");
+        Console.WriteLine($"Email: {contact.Email}");
+        Console.WriteLine($"TelephonNumber: {contact.Phone}");
+        Console.WriteLine($"Address: {contact.Address}");
     }
 
     private void DisplayPressAnyKey()

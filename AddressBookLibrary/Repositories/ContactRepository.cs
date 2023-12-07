@@ -1,4 +1,5 @@
 ﻿using AddressBookLibrary.Interfaces;
+using AddressBookLibrary.Models;
 using AddressBookLibrary.Models.Responses;
 using AddressBookLibrary.Services;
 using System.Diagnostics;
@@ -8,30 +9,39 @@ namespace AddressBookLibrary.Repositories;
 
 public class ContactRepository : IContactRepository
 {
-    private  List<IContact> _contacts;
+    private readonly List<IContact> _contacts;
     
-    private  FileService _fileService;
+    private readonly FileService _fileService;
     
     private readonly string filePath = @"C:\projects\contacts.json";
 
-    IRepositoryResult result = new RepositoryResult();
+    IRepositoryResult result= new RepositoryResult();
+
+
     public ContactRepository(List<IContact> contacts, FileService fileService)
     {
-        _contacts = contacts ?? new List<IContact>();
         _fileService = fileService;
+        _contacts = contacts;
     }
+
 
     public IRepositoryResult AddContact(IContact contact)
     {
         try
         {
-            var existingContacts = _fileService.ReadFromJsonFile(filePath).ToList();
-            
-            _contacts.AddRange(existingContacts);
-            
             if (!_contacts.Any(x => x.Email == contact.Email))
             {
-                _contacts.Add(contact);
+                var newContact = new Contact
+                {
+                    FirstName = contact.FirstName,
+                    LastName = contact.LastName,
+                    Email = contact.Email,
+                    Phone = contact.Phone,
+                    Address = contact.Address
+                    
+                };
+
+                _contacts.Add(newContact);
                 
                 // Save the updated contacts list to a JSON file
                 _fileService.WriteToJsonFile(_contacts, filePath);
@@ -83,11 +93,12 @@ public class ContactRepository : IContactRepository
         return null!;
     }
 
-    public IRepositoryResult GetContacts()
+    public IRepositoryResult GetAllContactsToList()
     {
         try
         {
-            result.Result = _fileService.ReadFromJsonFile(filePath);
+            _contacts.AddRange(_fileService.ReadFromJsonFile(filePath));
+            result.Result = _contacts;
             result.Status = Enums.RepositoryStatus.Suceeded;
 
         }
@@ -96,7 +107,23 @@ public class ContactRepository : IContactRepository
             result.Status = Enums.RepositoryStatus.Failed;
             Debug.WriteLine(ex);
         }
-        return null!;
+        return result;
+    }
+
+    public IRepositoryResult GetAllContacts()
+    {
+        try
+        {
+            result.Result = _contacts;
+            result.Status = Enums.RepositoryStatus.Suceeded;
+
+        }
+        catch (Exception ex)
+        {
+            result.Status = Enums.RepositoryStatus.Failed;
+            Debug.WriteLine(ex);
+        }
+        return result;
     }
 
     public IRepositoryResult UpdateContact(IContact contact)

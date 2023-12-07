@@ -1,5 +1,4 @@
-﻿
-using AddressBookLibrary.Interfaces;
+﻿using AddressBookLibrary.Interfaces;
 using AddressBookLibrary.Models;
 using Newtonsoft.Json;
 using System.Diagnostics;
@@ -35,7 +34,7 @@ namespace AddressBookLibrary.Services
             {
                 // Serialize the updated list
                 string jsonDataToWrite = JsonConvert.SerializeObject(data);
-                
+
                 // Write the updated data back to the file
                 using (var sw = new StreamWriter(filePath))
                 {
@@ -50,8 +49,8 @@ namespace AddressBookLibrary.Services
             return false;
         }
 
-        
 
-       
+
+
     }
 }
