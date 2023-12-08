@@ -4,10 +4,15 @@ namespace AddressBookLibrary.Interfaces;
 public interface IContactRepository
 {
     /// <summary>
-    /// Add a contact to contact list
+    /// Adds a new contact if the email is unique and saves the updated contact list to a JSON file.
     /// </summary>
-    /// <param name="contact">a contact a type of IContact</param>
-    /// <returns>a repository result a type of IRepositoryResult</returns>
+    /// <param name="contact">The contact to be added to the list.</param>
+    /// <returns>
+    /// A RepositoryResult object indicating the status of the operation:
+    /// - RepositoryStatus.Succeeded if the contact was added successfully.
+    /// - RepositoryStatus.AlreadyExists if a contact with the same email already exists.
+    /// - RepositoryStatus.Failed if an exception occurred during the operation.
+    /// </returns>
     IRepositoryResult AddContact(IContact contact);
 
 

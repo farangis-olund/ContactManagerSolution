@@ -45,12 +45,9 @@ namespace AddressBookLibrary.Services
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                return false;
             }
-            return false;
+            
         }
-
-
-
-
     }
 }

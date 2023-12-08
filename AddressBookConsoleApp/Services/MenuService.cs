@@ -2,7 +2,6 @@
 using AddressBookLibrary.Interfaces;
 using AddressBookLibrary.Enums;
 using AddressBookLibrary.Models;
-using System;
 
 namespace AddressBookConsoleApp.Services;
 
@@ -20,20 +19,21 @@ public class MenuService : IMenuService
     public MenuService(IContactRepository contactRepository)
     {
         _contactRepository = contactRepository;
-        
     }
 
     public void ShowMenu()
     {
         _contactRepository.GetAllContactsToList();
+        
+        bool exit = false;
 
-        while (true)
+        while (!exit)
         {
             DisplayMainMenu();
 
-            var option = Console.ReadLine();
+            var userInput = Console.ReadLine();
 
-            switch (option)
+            switch (userInput)
             {
                 case "1":
                     AddContact();
@@ -48,14 +48,14 @@ public class MenuService : IMenuService
                     ShowAllContacts();
                     break;
                 case "0":
-                    ExitApp();
+                    exit = true;
+                    Console.WriteLine("Exiting...");
                     break;
                 default:
-                    Console.WriteLine("\nInvalid option selected. Try again!");
+                    Console.WriteLine("\nInvalid option. Please select a valid option!");
                     Console.ReadKey();
                     break;
             }
-
         }
     }
 
@@ -68,14 +68,15 @@ public class MenuService : IMenuService
         Console.WriteLine("  4.  Show all contacts");
         Console.WriteLine("  0.  Exit");
         Console.WriteLine();
-        Console.Write(" SELECT THE OPTION ");
-
+        Console.Write(" Select an option ");
     }
 
     private void DisplayMenuTitle(string title)
     {
         Console.Clear();
-        Console.WriteLine($"   ==== {title} ==== ");
+        Console.WriteLine(new string('-', Console.WindowWidth - 1));
+        Console.WriteLine(title);
+        Console.WriteLine(new string('-', Console.WindowWidth - 1));
         Console.WriteLine();
     }
 

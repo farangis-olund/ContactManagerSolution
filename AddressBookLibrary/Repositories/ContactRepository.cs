@@ -11,14 +11,13 @@ public class ContactRepository : IContactRepository
 {
     private readonly List<IContact> _contacts;
     
-    private readonly FileService _fileService;
+    private readonly IFileService _fileService;
     
     private readonly string filePath = @"C:\projects\contacts.json";
 
     IRepositoryResult result= new RepositoryResult();
 
-
-    public ContactRepository(List<IContact> contacts, FileService fileService)
+    public ContactRepository(List<IContact> contacts, IFileService fileService)
     {
         _fileService = fileService;
         _contacts = contacts;
