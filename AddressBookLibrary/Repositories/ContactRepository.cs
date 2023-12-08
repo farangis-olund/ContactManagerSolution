@@ -1,7 +1,5 @@
 ﻿using AddressBookLibrary.Interfaces;
 using AddressBookLibrary.Models;
-using AddressBookLibrary.Models.Responses;
-using AddressBookLibrary.Services;
 using System.Diagnostics;
 
 
@@ -12,15 +10,16 @@ public class ContactRepository : IContactRepository
     private readonly List<IContact> _contacts;
     
     private readonly IFileService _fileService;
-    
+      
+    private readonly IRepositoryResult _result;
+
     private readonly string filePath = @"C:\projects\contacts.json";
 
-    IRepositoryResult result= new RepositoryResult();
-
-    public ContactRepository(List<IContact> contacts, IFileService fileService)
+    public ContactRepository(List<IContact> contacts, IFileService fileService, IRepositoryResult result)
     {
         _fileService = fileService;
         _contacts = contacts;
+        _result = result;
     }
 
 
@@ -45,22 +44,22 @@ public class ContactRepository : IContactRepository
                 // Save the updated contacts list to a JSON file
                 _fileService.WriteToJsonFile(_contacts, filePath);
 
-                result.Status = Enums.RepositoryStatus.Suceeded;
+                _result.Status = Enums.RepositoryStatus.Succeeded;
             }
             else
             {
-                result.Status = Enums.RepositoryStatus.AlreadyExists;
+                _result.Status = Enums.RepositoryStatus.AlreadyExists;
             }
 
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex);
-            result.Status = Enums.RepositoryStatus.Failed;
-            result.Result = ex.Message;
+            _result.Status = Enums.RepositoryStatus.Failed;
+            _result.Result = ex.Message;
         }
 
-        return result;
+        return _result;
 
     }
 
@@ -72,24 +71,24 @@ public class ContactRepository : IContactRepository
             if (contact != null)
             {
                 _contacts.Remove(contact);
-                // Save the updated contacts list to a JSON file
+                
                 _fileService.WriteToJsonFile(_contacts, filePath);
 
-                result.Status = Enums.RepositoryStatus.Suceeded;
-                result.Result = _contacts; 
+                _result.Status = Enums.RepositoryStatus.Succeeded;
+                _result.Result = _contacts; 
             }
             else
             {
-                result.Status = Enums.RepositoryStatus.NotFound;
+                _result.Status = Enums.RepositoryStatus.NotFound;
             }
 
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex);
-            result.Status = Enums.RepositoryStatus.Failed;
+            _result.Status = Enums.RepositoryStatus.Failed;
         }
-        return result;
+        return _result;
     }
 
     public IRepositoryResult GetContact(string email)
@@ -99,12 +98,12 @@ public class ContactRepository : IContactRepository
             var contact = _contacts.FirstOrDefault(x => x.Email == email);
             if (contact != null)
             {
-                result.Status = Enums.RepositoryStatus.Suceeded;
-                result.Result = contact;
+                _result.Status = Enums.RepositoryStatus.Succeeded;
+                _result.Result = contact;
             }
             else
             {
-                result.Status = Enums.RepositoryStatus.NotFound;
+                _result.Status = Enums.RepositoryStatus.NotFound;
             }
 
         }
@@ -112,40 +111,40 @@ public class ContactRepository : IContactRepository
         {
             Debug.WriteLine(ex);
         }
-        return result;
+        return _result;
     }
 
-    public IRepositoryResult GetAllContactsToList()
+    public IRepositoryResult GetAllContactsFromFileToList()
     {
         try
         {
             _contacts.AddRange(_fileService.ReadFromJsonFile(filePath));
-            result.Result = _contacts;
-            result.Status = Enums.RepositoryStatus.Suceeded;
+            _result.Result = _contacts;
+            _result.Status = Enums.RepositoryStatus.Succeeded;
 
         }
         catch (Exception ex)
         {
-            result.Status = Enums.RepositoryStatus.Failed;
+            _result.Status = Enums.RepositoryStatus.Failed;
             Debug.WriteLine(ex);
         }
-        return result;
+        return _result;
     }
 
-    public IRepositoryResult GetAllContacts()
+    public IRepositoryResult GetAllContacts()   
     {
         try
         {
-            result.Result = _contacts;
-            result.Status = Enums.RepositoryStatus.Suceeded;
+            _result.Result = _contacts;
+            _result.Status = Enums.RepositoryStatus.Succeeded;
 
         }
         catch (Exception ex)
         {
-            result.Status = Enums.RepositoryStatus.Failed;
+            _result.Status = Enums.RepositoryStatus.Failed;
             Debug.WriteLine(ex);
         }
-        return result;
+        return _result;
     }
 
     public IRepositoryResult UpdateContact(IContact contact)

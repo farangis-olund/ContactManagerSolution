@@ -37,7 +37,7 @@ public interface IContactRepository
     /// - RepositoryStatus.Succeeded if the contacts were successfully retrieved.
     /// - RepositoryStatus.Failed if an exception occurred during the retrieval process.
     /// </returns>
-    IRepositoryResult GetAllContactsToList();
+    IRepositoryResult GetAllContactsFromFileToList();
 
 
     /// <summary>

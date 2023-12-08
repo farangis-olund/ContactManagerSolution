@@ -2,13 +2,9 @@
 using AddressBookLibrary.Interfaces;
 using AddressBookLibrary.Enums;
 using AddressBookLibrary.Models;
+using AddressBookConsoleApp.Interfaces;
 
 namespace AddressBookConsoleApp.Services;
-
-public interface IMenuService
-{
-    void ShowMenu();
-}
 
 public class MenuService : IMenuService
 {
@@ -23,7 +19,7 @@ public class MenuService : IMenuService
 
     public void ShowMenu()
     {
-        _contactRepository.GetAllContactsToList();
+        _contactRepository.GetAllContactsFromFileToList();
         
         bool exit = false;
 
@@ -63,7 +59,7 @@ public class MenuService : IMenuService
     {
         DisplayMenuTitle(" Address Book Menu");
         Console.WriteLine("  1.  Add contact");
-        Console.WriteLine("  2.  Show a contact");
+        Console.WriteLine("  2.  Show contact details");
         Console.WriteLine("  3.  Delete a contact");
         Console.WriteLine("  4.  Show all contacts");
         Console.WriteLine("  0.  Exit");
@@ -108,7 +104,7 @@ public class MenuService : IMenuService
         
         switch (result.Status)
         {
-            case RepositoryStatus.Suceeded:
+            case RepositoryStatus.Succeeded:
                 Console.WriteLine("Contact was successfully added!");
                 break;
 
@@ -132,7 +128,7 @@ public class MenuService : IMenuService
         
         switch (result.Status)
         {
-            case RepositoryStatus.Suceeded:
+            case RepositoryStatus.Succeeded:
                 if (result.Result is IContact contact)
                 {
                     Console.Clear();
@@ -162,7 +158,7 @@ public class MenuService : IMenuService
         
         switch (result.Status)
         {
-            case RepositoryStatus.Suceeded:
+            case RepositoryStatus.Succeeded:
                 Console.WriteLine("A Contact was successfully deleted!");
                 break;
             case RepositoryStatus.NotFound:
@@ -183,7 +179,7 @@ public class MenuService : IMenuService
         DisplayMenuTitle("Show All Contacts");
 
         var result = _contactRepository.GetAllContacts();
-        if (result.Status == RepositoryStatus.Suceeded)
+        if (result.Status == RepositoryStatus.Succeeded)
         {
             if (result.Result is List<IContact> contact)
             {
@@ -219,15 +215,6 @@ public class MenuService : IMenuService
         Console.WriteLine();
         Console.WriteLine("Press any key to continue");
         Console.ReadKey();
-    }
-
-    private void ExitApp()
-    {
-        Console.Clear();
-        Console.Write("Are you sure that you want to exit? (y/n) ");
-        var option = Console.ReadLine() ?? "";
-        if (option.Equals("y", StringComparison.CurrentCultureIgnoreCase))
-            Environment.Exit(0);
     }
 
 }

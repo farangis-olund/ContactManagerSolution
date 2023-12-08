@@ -3,7 +3,7 @@
 public enum RepositoryStatus
 {
     Failed = 0,
-    Suceeded = 1,
+    Succeeded = 1,
     AlreadyExists = 2,
     NotFound = 3,
     Updated = 4,

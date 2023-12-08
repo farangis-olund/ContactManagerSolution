@@ -1,5 +1,6 @@
 ﻿using AddressBookLibrary.Interfaces;
 using AddressBookLibrary.Models;
+using AddressBookLibrary.Models.Responses;
 using AddressBookLibrary.Repositories;
 using Moq;
 
@@ -9,6 +10,7 @@ public class ContactRepository_Test
 {
     private ContactRepository contactRepository;
     private Mock<IFileService> _fileServiceMock;
+    private IRepositoryResult _repositoryResult;
     private List<IContact> contacts;
     private readonly string filePath = @"C:\projects\contacts.json";
     public ContactRepository_Test()
@@ -16,7 +18,8 @@ public class ContactRepository_Test
         // Initializing mock and repository before test
         contacts = new List<IContact>();
         _fileServiceMock = new Mock<IFileService>();
-        contactRepository = new ContactRepository(contacts, _fileServiceMock.Object);
+        _repositoryResult= new RepositoryResult();
+        contactRepository = new ContactRepository(contacts, _fileServiceMock.Object, _repositoryResult);
     }
 
     [Fact]
@@ -37,7 +40,7 @@ public class ContactRepository_Test
         var result = contactRepository.AddContact(contact);
 
         //Assert
-        Assert.Equal(Enums.RepositoryStatus.Suceeded, result.Status);
+        Assert.Equal(Enums.RepositoryStatus.Succeeded, result.Status);
         Assert.Single(contacts);
         Assert.Equal(contact.FirstName, contacts[0].FirstName);
     }
@@ -50,19 +53,19 @@ public class ContactRepository_Test
         {
             FirstName = "Elsa",
             LastName = "Olund",
-            Email = "example@example.com",
+            Email = "elsa@example.com",
             Phone = "07344344",
             Address = "st.Example, 4555"
         };
         contacts.Add(contact);
 
-        string existingEmail = "example@example.com";
+        string existingEmail = "elsa@example.com";
 
         // Act
         var result = contactRepository.GetContact(existingEmail);
 
         // Assert
-        Assert.Equal(Enums.RepositoryStatus.Suceeded, result.Status);
+        Assert.Equal(Enums.RepositoryStatus.Succeeded, result.Status);
         Assert.NotNull(result.Result);
         Assert.IsType<Contact>(result.Result);
         Assert.Equal(existingEmail, ((Contact)result.Result).Email);
@@ -87,7 +90,7 @@ public class ContactRepository_Test
         var result = contactRepository.DeleteContact(contact.Email);
 
         // Assert
-        Assert.Equal(Enums.RepositoryStatus.Suceeded, result.Status);
+        Assert.Equal(Enums.RepositoryStatus.Succeeded, result.Status);
         Assert.DoesNotContain(contact, contacts); 
                                                           
     }
@@ -121,13 +124,13 @@ public class ContactRepository_Test
 
         _fileServiceMock.Setup(x => x.ReadFromJsonFile(filePath)).Returns(sampleContactsFromFile);
 
-        var contactRepositoryWithMock = new ContactRepository(new List<IContact>(), _fileServiceMock.Object);
+        var contactRepositoryWithMock = new ContactRepository(new List<IContact>(), _fileServiceMock.Object, _repositoryResult);
 
         // Act
-        var result = contactRepositoryWithMock.GetAllContactsToList();
+        var result = contactRepositoryWithMock.GetAllContactsFromFileToList();
 
         // Assert
-        Assert.Equal(Enums.RepositoryStatus.Suceeded, result.Status);
+        Assert.Equal(Enums.RepositoryStatus.Succeeded, result.Status);
         Assert.NotNull(result.Result);
         Assert.IsType<List<IContact>>(result.Result);
         Assert.Equal(sampleContactsFromFile.Count, ((List<IContact>)result.Result).Count);
@@ -143,7 +146,7 @@ public class ContactRepository_Test
         var result = contactRepository.GetAllContacts();
 
         // Assert
-        Assert.Equal(Enums.RepositoryStatus.Suceeded, result.Status);
+        Assert.Equal(Enums.RepositoryStatus.Succeeded, result.Status);
         Assert.NotNull(result.Result);
         Assert.Equal(contacts, result.Result); 
     }
