@@ -2,6 +2,6 @@
 {
     public interface IMenuService
     {
-        void ShowMenu();
+        public void ShowMenu();
     }
 }

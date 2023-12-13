@@ -1,4 +1,5 @@
 ﻿using AddressBookLibrary.Interfaces;
+using System.Diagnostics;
 
 namespace AddressBookLibrary.Services
 {
@@ -6,12 +7,21 @@ namespace AddressBookLibrary.Services
     {
         public ISearchResult ContactSearch(string email)
         {
-            throw new NotImplementedException();
+            try
+            {
+
+            } catch (Exception ex) { Debug.WriteLine(ex); }
+            return null!;
         }
 
         public IValidationResult ContactValidation(IContact contact)
         {
-            throw new NotImplementedException();
+            try
+            {
+
+            }
+            catch (Exception ex) { Debug.WriteLine(ex); }
+            return null!;
         }
     }
 }

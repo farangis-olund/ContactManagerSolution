@@ -2,23 +2,21 @@
 using AddressBookLibrary.Models;
 using System.Diagnostics;
 
-
 namespace AddressBookLibrary.Repositories;
 
 public class ContactRepository : IContactRepository
 {
-    private readonly List<IContact> _contacts;
-    
+    private readonly List<IContact> _contacts =new List<IContact>();
+
     private readonly IFileService _fileService;
       
     private readonly IRepositoryResult _result;
 
     private readonly string filePath = @"C:\projects\contacts.json";
 
-    public ContactRepository(List<IContact> contacts, IFileService fileService, IRepositoryResult result)
+    public ContactRepository(IFileService fileService, IRepositoryResult result)
     {
-        _fileService = fileService;
-        _contacts = contacts;
+         _fileService = fileService;
         _result = result;
     }
 

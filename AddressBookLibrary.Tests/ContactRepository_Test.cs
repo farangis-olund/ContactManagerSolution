@@ -19,7 +19,7 @@ public class ContactRepository_Test
         contacts = new List<IContact>();
         _fileServiceMock = new Mock<IFileService>();
         _repositoryResult= new RepositoryResult();
-        contactRepository = new ContactRepository(contacts, _fileServiceMock.Object, _repositoryResult);
+        contactRepository = new ContactRepository(_fileServiceMock.Object, _repositoryResult);
     }
 
     [Fact]
@@ -124,7 +124,7 @@ public class ContactRepository_Test
 
         _fileServiceMock.Setup(x => x.ReadFromJsonFile(filePath)).Returns(sampleContactsFromFile);
 
-        var contactRepositoryWithMock = new ContactRepository(new List<IContact>(), _fileServiceMock.Object, _repositoryResult);
+        var contactRepositoryWithMock = new ContactRepository( _fileServiceMock.Object, _repositoryResult);
 
         // Act
         var result = contactRepositoryWithMock.GetAllContactsFromFileToList();

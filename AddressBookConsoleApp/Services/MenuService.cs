@@ -1,33 +1,35 @@
 ﻿
 using AddressBookLibrary.Interfaces;
 using AddressBookLibrary.Enums;
-using AddressBookLibrary.Models;
 using AddressBookConsoleApp.Interfaces;
 
 namespace AddressBookConsoleApp.Services;
 
 public class MenuService : IMenuService
 {
-    IContact _contact= new Contact();
-
+    private IContact _contact;
     private IContactRepository _contactRepository;
+    private readonly IConsoleService _consoleService;
 
-    public MenuService(IContactRepository contactRepository)
+    public MenuService(IContactRepository contactRepository, IContact contact, IConsoleService consoleService)
     {
         _contactRepository = contactRepository;
+        _contact = contact;
+        _consoleService = consoleService;
+       
     }
 
     public void ShowMenu()
     {
         _contactRepository.GetAllContactsFromFileToList();
-        
+
         bool exit = false;
 
         while (!exit)
         {
             DisplayMainMenu();
 
-            var userInput = Console.ReadLine();
+            var userInput = _consoleService.ReadLine();
 
             switch (userInput)
             {
@@ -45,11 +47,11 @@ public class MenuService : IMenuService
                     break;
                 case "0":
                     exit = true;
-                    Console.WriteLine("Exiting...");
+                    _consoleService.WriteLine("Exiting...");
                     break;
                 default:
-                    Console.WriteLine("\nInvalid option. Please select a valid option!");
-                    Console.ReadKey();
+                    _consoleService.WriteLine("\nInvalid option. Please select a valid option!");
+                    _consoleService.ReadKey();
                     break;
             }
         }
@@ -58,62 +60,62 @@ public class MenuService : IMenuService
     private void DisplayMainMenu()
     {
         DisplayMenuTitle(" Address Book Menu");
-        Console.WriteLine("  1.  Add contact");
-        Console.WriteLine("  2.  Show contact details");
-        Console.WriteLine("  3.  Delete a contact");
-        Console.WriteLine("  4.  Show all contacts");
-        Console.WriteLine("  0.  Exit");
-        Console.WriteLine();
-        Console.Write(" Select an option ");
+        _consoleService.WriteLine("  1.  Add contact");
+        _consoleService.WriteLine("  2.  Show contact details");
+        _consoleService.WriteLine("  3.  Delete a contact");
+        _consoleService.WriteLine("  4.  Show all contacts");
+        _consoleService.WriteLine("  0.  Exit");
+       
+        _consoleService.Write("\nSelect an option ");
     }
 
     private void DisplayMenuTitle(string title)
     {
-        Console.Clear();
-        Console.WriteLine(new string('-', Console.WindowWidth - 1));
-        Console.WriteLine(title);
-        Console.WriteLine(new string('-', Console.WindowWidth - 1));
-        Console.WriteLine();
+        _consoleService.Clear();
+        _consoleService.WriteLine("------------------------------------------------------------------------");
+        _consoleService.WriteLine(title);
+        _consoleService.WriteLine("------------------------------------------------------------------------");
+        _consoleService.WriteLine("");
     }
 
     private void AddContact()
     {
         DisplayMenuTitle($"Add New Contact");
-        
-        Console.Write("Enter First Name: ");
-        _contact.FirstName = Console.ReadLine() ?? "";
-        Console.WriteLine();
 
-        Console.Write("Enter Last Name: ");
-        _contact.LastName = Console.ReadLine() ?? "";
-        Console.WriteLine();
+        _consoleService.Write("Enter First Name: ");
+        _contact.FirstName = _consoleService.ReadLine() ?? "";
+        _consoleService.WriteLine("");
 
-        Console.Write("Enter Email: ");
-        _contact.Email = Console.ReadLine() ?? "";
-        Console.WriteLine();
+        _consoleService.Write("Enter Last Name: ");
+        _contact.LastName = _consoleService.ReadLine() ?? "";
+        _consoleService.WriteLine("");
 
-        Console.Write("Enter Phone Number: ");
-        _contact.Phone = Console.ReadLine() ?? "";
-        Console.WriteLine();
+        _consoleService.Write("Enter Email: ");
+        _contact.Email = _consoleService.ReadLine() ?? "";
+        _consoleService.WriteLine("");
 
-        Console.Write("Enter Address: ");
-        _contact.Address = Console.ReadLine() ?? "";
-        Console.WriteLine();
-        
+        _consoleService.Write("Enter Phone Number: ");
+        _contact.Phone = _consoleService.ReadLine() ?? "";
+        _consoleService.WriteLine("");
+         
+        _consoleService.Write("Enter Address: ");
+        _contact.Address = _consoleService.ReadLine() ?? "";
+        _consoleService.WriteLine("");
+
         var result = _contactRepository.AddContact(_contact);
         
         switch (result.Status)
         {
             case RepositoryStatus.Succeeded:
-                Console.WriteLine("Contact was successfully added!");
+                _consoleService.WriteLine("Contact was successfully added!");
                 break;
 
             case RepositoryStatus.AlreadyExists:
-                Console.WriteLine("Contact aready exist!");
+                _consoleService.WriteLine("Contact aready exist!");
                 break;
 
             case RepositoryStatus.Failed:
-                Console.WriteLine("Something was wrang!");
+                _consoleService.WriteLine("Something was wrang!");
                 break;
         }
 
@@ -122,8 +124,8 @@ public class MenuService : IMenuService
 
     private void ShowContact()
     {
-        Console.Write("Enter an Email: ");
-        var option = Console.ReadLine() ?? "";
+        _consoleService.Write("Enter an Email: ");
+        var option = _consoleService.ReadLine() ?? "";
         var result = _contactRepository.GetContact(option);
         
         switch (result.Status)
@@ -131,18 +133,18 @@ public class MenuService : IMenuService
             case RepositoryStatus.Succeeded:
                 if (result.Result is IContact contact)
                 {
-                    Console.Clear();
+                    _consoleService.Clear();
                     DisplayContactDetails(contact);
                 }
                 break;
             case RepositoryStatus.NotFound:
-                Console.WriteLine("No contact found for the provided Email.");
+                _consoleService.WriteLine("No contact found for the provided Email.");
                 break;
             case RepositoryStatus.Failed:
-                Console.WriteLine("An error occurred while fetching the contact details.");
+                _consoleService.WriteLine("An error occurred while fetching the contact details.");
                 break;
             default:
-                Console.WriteLine("Unexpected status encountered.");
+                _consoleService.WriteLine("Unexpected status encountered.");
                 break;
         }
 
@@ -152,29 +154,29 @@ public class MenuService : IMenuService
 
     private void DeleteContact()
     {
-        Console.Write("Enter an Email: ");
-        var option = Console.ReadLine() ?? "";
+        _consoleService.Write("Enter an Email: ");
+        var option = _consoleService.ReadLine() ?? "";
         var result = _contactRepository.DeleteContact(option);
         
         switch (result.Status)
         {
             case RepositoryStatus.Succeeded:
-                Console.WriteLine("A Contact was successfully deleted!");
+                _consoleService.WriteLine("A Contact was successfully deleted!");
                 break;
             case RepositoryStatus.NotFound:
-                Console.WriteLine("No contact found for the provided Email.");
+                _consoleService.WriteLine("No contact found for the provided Email.");
                 break;
             case RepositoryStatus.Failed:
-                Console.WriteLine("An error occurred while fetching the contact details.");
+                _consoleService.WriteLine("An error occurred while fetching the contact details.");
                 break;
             default:
-                Console.WriteLine("Unexpected status encountered.");
+                _consoleService.WriteLine("Unexpected status encountered.");
                 break;
         }
         DisplayPressAnyKey();
     }
 
-    private void ShowAllContacts()
+    private void ShowAllContacts()  
     {
         DisplayMenuTitle("Show All Contacts");
 
@@ -185,14 +187,14 @@ public class MenuService : IMenuService
             {
                 if (!contact.Any())
                 {
-                    Console.WriteLine($"There is no any contact in the list.");
+                    _consoleService.WriteLine($"There is no any contact in the list.");
                 }
                 else
                 {
                     foreach (var item in contact)
                     {
-                        Console.WriteLine($"FirstName: {item.FirstName} LastName: {item.LastName} Email: {item.Email}");
-                        Console.WriteLine();
+                        _consoleService.WriteLine($"FirstName: {item.FirstName} LastName: {item.LastName} Email: {item.Email}");
+                        _consoleService.WriteLine("");
                     }
                 }
             }
@@ -200,21 +202,21 @@ public class MenuService : IMenuService
         DisplayPressAnyKey();
     }
 
-    private void DisplayContactDetails(IContact contact)
+    private void DisplayContactDetails(IContact contact)            
     {
         DisplayMenuTitle("Detail information of the contact");
-        Console.WriteLine($" First Name: {contact.FirstName}");
-        Console.WriteLine($" Last Name: {contact.LastName}");
-        Console.WriteLine($" Email: {contact.Email}");
-        Console.WriteLine($" Phone Number: {contact.Phone}");
-        Console.WriteLine($" Address: {contact.Address}");
+        _consoleService.WriteLine($" First Name: {contact.FirstName}");
+        _consoleService.WriteLine($" Last Name: {contact.LastName}");
+        _consoleService.WriteLine($" Email: {contact.Email}");
+        _consoleService.WriteLine($" Phone Number: {contact.Phone}");
+        _consoleService.WriteLine($" Address: {contact.Address}");
     }
 
     private void DisplayPressAnyKey()
     {
         Console.WriteLine();
-        Console.WriteLine("Press any key to continue");
-        Console.ReadKey();
+        _consoleService.WriteLine("Press any key to continue");
+        _consoleService.ReadKey();
     }
 
 }
