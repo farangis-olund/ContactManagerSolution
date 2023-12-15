@@ -4,22 +4,15 @@ using System.Diagnostics;
 
 namespace AddressBookLibrary.Repositories;
 
-public class ContactRepository : IContactRepository
+public class ContactRepository(IFileService fileService, IRepositoryResult result) : IContactRepository
 {
-    private readonly List<IContact> _contacts =new List<IContact>();
+    private readonly List<IContact> _contacts =[];
 
-    private readonly IFileService _fileService;
+    private readonly IFileService _fileService = fileService;
       
-    private readonly IRepositoryResult _result;
+    private readonly IRepositoryResult _result = result;
 
     private readonly string filePath = @"C:\projects\contacts.json";
-
-    public ContactRepository(IFileService fileService, IRepositoryResult result)
-    {
-         _fileService = fileService;
-        _result = result;
-    }
-
 
     public IRepositoryResult AddContact(IContact contact)
     {
